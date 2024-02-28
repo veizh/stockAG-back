@@ -1,0 +1,17 @@
+{
+    "version": 2,
+    "buildCommand":"node server",
+    "installCommand":"npm install",
+    "builds": [
+      {
+        "src": "app.js",
+        "use": "@vercel/node"
+      }
+    ],
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "app.js"
+      }
+    ]
+  }
