@@ -11,7 +11,7 @@ require("dotenv").config();
 var app = express();
 const cors = require("cors");
 app.use(cors({
-  origin:"https://stock-ag-front.vercel.app/identification",
+  origin:"https://stock-ag-front.vercel.app",
   methods:["PUT","POST","GET","DELETE"]
 }));
 app.use(express.json());
