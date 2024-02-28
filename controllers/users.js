@@ -22,12 +22,12 @@ exports.create = async (req,res)=>{
   }
 
   function createJWT(id){
-    return jwt.sign({id:id.toString()}, process.env.key_bcrypt)
+    return jwt.sign({id:id.toString()}, process.env.BCRYPT_KEY)
 }
 exports.verifyJWT = async (req, res) => {
     try {
       const token = req.headers.authorization.split(' ')[1];
-      const id = jwt.verify(token, process.env.key_bcrypt);
+      const id = jwt.verify(token, process.env.BCRYPT_KEY);
          const user =  await  userSchema.find({_id:id.id})
          if(user){
             return res.status(200).json(user[0])
