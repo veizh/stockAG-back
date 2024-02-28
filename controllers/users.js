@@ -2,8 +2,9 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken');
 const userSchema = require("../models/user");
 exports.create = async (req,res)=>{
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.setHeader('Access-Control-Allow-Origin',"https://stock-ag-front.vercel.app/:3000");
+res.setHeader('Access-Control-Allow-Headers',"*");
+res.header('Access-Control-Allow-Credentials', true);
     req.body.password = await bcrypt.hash(req.body.password,10)
     const newUser = new userSchema({...req.body})
     newUser.save()
@@ -11,8 +12,9 @@ exports.create = async (req,res)=>{
       .catch(err=>res.status(400).json({msg:"Ce nom de compte existe deja",err}))
   }
   exports.login= async(req,res)=>{
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.setHeader('Access-Control-Allow-Origin',"https://stock-ag-front.vercel.app/:3000");
+  res.setHeader('Access-Control-Allow-Headers',"*");
+  res.header('Access-Control-Allow-Credentials', true);
     const {mail,password}=req.body
     if(!mail || !password ) return res.status(400).json({err:'Un champ n\'est pas rempli'})
 
@@ -29,8 +31,9 @@ exports.create = async (req,res)=>{
     return jwt.sign({id:id.toString()}, 'shhhhh')
 }
 exports.verifyJWT = async (req, res) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.setHeader('Access-Control-Allow-Origin',"https://stock-ag-front.vercel.app/:3000");
+res.setHeader('Access-Control-Allow-Headers',"*");
+res.header('Access-Control-Allow-Credentials', true);
     try {
       const token = req.headers.authorization.split(' ')[1];
       const id = jwt.verify(token, 'shhhhh');
