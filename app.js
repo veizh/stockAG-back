@@ -12,7 +12,7 @@ var app = express();
 const cors = require("cors");
 app.use(cors({
   origin:"https://stock-ag-front.vercel.app",
-  methods:["PUT","POST","GET","DELETE"]
+  methods:["PUT","POST","GET","DELETE"],
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
