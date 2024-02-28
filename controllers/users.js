@@ -2,9 +2,6 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken');
 const userSchema = require("../models/user");
 exports.create = async (req,res)=>{
-  res.setHeader('Access-Control-Allow-Origin',"https://stock-ag-front.vercel.app/:3000");
-res.setHeader('Access-Control-Allow-Headers',"*");
-res.header('Access-Control-Allow-Credentials', true);
     req.body.password = await bcrypt.hash(req.body.password,10)
     const newUser = new userSchema({...req.body})
     newUser.save()
@@ -12,31 +9,25 @@ res.header('Access-Control-Allow-Credentials', true);
       .catch(err=>res.status(400).json({msg:"Ce nom de compte existe deja",err}))
   }
   exports.login= async(req,res)=>{
-    res.setHeader('Access-Control-Allow-Origin',"https://stock-ag-front.vercel.app/:3000");
-  res.setHeader('Access-Control-Allow-Headers',"*");
-  res.header('Access-Control-Allow-Credentials', true);
     const {mail,password}=req.body
     if(!mail || !password ) return res.status(400).json({err:'Un champ n\'est pas rempli'})
 
     const user = await userSchema.findOne({mail:mail})
-     if(!user)return res.status(400).json({err:"mail is unkwnown "})
+     if(!user)return res.status(400).json({err:"Ce compte n'existe pas."})
 
     const matchingPasswords = await bcrypt.compare(password,user.password)
-    if(!matchingPasswords)return  res.status(400).json({err:"le mot de passe n'est pas bon"})
+    if(!matchingPasswords)return  res.status(400).json({err:"le mot de passe ne correspond pas."})
     let token = createJWT(user._id)
     return res.status(200).json({success:"connected !",token})
   }
 
   function createJWT(id){
-    return jwt.sign({id:id.toString()}, 'shhhhh')
+    return jwt.sign({id:id.toString()}, process.env.key_bcrypt)
 }
 exports.verifyJWT = async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin',"https://stock-ag-front.vercel.app/:3000");
-res.setHeader('Access-Control-Allow-Headers',"*");
-res.header('Access-Control-Allow-Credentials', true);
     try {
       const token = req.headers.authorization.split(' ')[1];
-      const id = jwt.verify(token, 'shhhhh');
+      const id = jwt.verify(token, process.env.key_bcrypt);
          const user =  await  userSchema.find({_id:id.id})
          if(user){
             return res.status(200).json(user[0])

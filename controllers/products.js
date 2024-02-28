@@ -87,6 +87,6 @@ exports.updateQuantity = async (req, res) => {
     );
     return res.status(200).json(product);
   } else {
-    return res.status(403).json({ msg: "u dont have acces to this" });
+    return res.status(403).json({ msg: "Vous n'avez pas les autorisations." });
   }
 };
