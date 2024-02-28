@@ -15,7 +15,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 const mongoose = require("mongoose");
 mongoose
   .connect("mongodb+srv://stockDB:Motdepasse1$@cluster0.9xga8hc.mongodb.net/?retryWrites=true&w=majority", {
