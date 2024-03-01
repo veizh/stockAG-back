@@ -13,7 +13,7 @@
       "src": "/(.*)",
       "dest": "app.js",
       "headers":{
-        "Access-Control-Allow-Origin": "https://stock-ag-front.vercel.app/"
+        "Access-Control-Allow-Origin": "https://stock-ag-front.vercel.app"
 
       }
     }
