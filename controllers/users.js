@@ -11,15 +11,19 @@ exports.create = async (req,res)=>{
   exports.login= async(req,res)=>{
     const {mail,password}=req.body
     if(!mail || !password ) return res.status(400).json({err:'Un champ n\'est pas rempli'})
-
-    const user = await userSchema.findOne({mail:mail})
+try {
+  const user = await userSchema.findOne({mail:mail})
      if(!user)return res.status(400).json({err:"Ce compte n'existe pas."})
 
     const matchingPasswords = await bcrypt.compare(password,user.password)
     if(!matchingPasswords)return  res.status(400).json({err:"le mot de passe ne correspond pas."})
     let token = createJWT(user._id)
     return res.status(200).json({success:"connected !",token})
-  }
+  
+} catch (error) {
+  console.log(error);
+}}
+    
 
   function createJWT(id){
     return jwt.sign({id:id.toString()}, process.env.BCRYPT_KEY)
