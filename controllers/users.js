@@ -11,7 +11,6 @@ exports.create = async (req,res)=>{
   exports.login= async(req,res)=>{
     const {mail,password}=req.body
     if(!mail || !password ) return res.status(400).json({err:'Un champ n\'est pas rempli'})
-try {
   const user = await userSchema.findOne({mail:mail})
      if(!user)return res.status(400).json({err:"Ce compte n'existe pas."})
 
@@ -20,9 +19,7 @@ try {
     let token = createJWT(user._id)
     return res.status(200).json({success:"connected !",token})
   
-} catch (error) {
-  console.log(error);
-}}
+} 
     
 
   function createJWT(id){
