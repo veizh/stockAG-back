@@ -10,15 +10,12 @@ require("dotenv").config();
 
 var app = express();
 const cors = require("cors");
-app.use(cors());
+
+app.use(cors())
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  next();
-});
 const mongoose = require("mongoose");
 mongoose
   .connect(process.env.MONGODB_URI, {
@@ -31,7 +28,8 @@ mongoose
   
 app.use('/', indexRouter);
 app.use('/products', productsRouter);
-app.use('/users', usersRouter);
+app.use('/users', usersRouter)
+
 
 
 
