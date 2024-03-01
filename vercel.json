@@ -9,13 +9,13 @@
     }
   ],
   "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "app.js",
-      "headers":{
-        "Access-Control-Allow-Origin": "https://stock-ag-front.vercel.app"
-
+      {
+        "src": "(.*)",
+        "dest": "./app.js",
+        "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+        "headers": {
+          "Access-Control-Allow-Origin": "*"
+        }
       }
-    }
   ]
 }
