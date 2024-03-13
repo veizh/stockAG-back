@@ -31,7 +31,7 @@ exports.create = async (req, res) => {
       newProduct
         .save()
         .then(() =>
-          res.status(200).json({ msg: "Le produit a bien été créer" })
+          res.status(200).json({ msg: "Le produit a bien été ajouté au stock !" })
         )
 
         .catch((err) =>
