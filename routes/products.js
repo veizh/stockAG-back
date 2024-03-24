@@ -8,7 +8,7 @@ router.get('/getOne/:ref', auth,products.getOne);
 router.get('/getAll',auth, products.getAll);
 router.post('/create',auth, products.create);
 router.put('/updateOne/:ref',auth, products.updateOne);
-router.put('/updateQuantityOnly/:ref',auth, products.updateQuantity)
+router.put('/updateQuantityAndAlert/:ref',auth, products.updateQuantityAndAlert)
 router.delete('/deleteOne/:ref',auth, products.deleteOne);
 
 // authorize route to roll

@@ -1,11 +1,14 @@
+var nodemailer = require('nodemailer')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken');
 const userSchema = require("../models/user");
+const { accesControler } = require('../util/access');
+require("dotenv").config();
 exports.create = async (req,res)=>{
     req.body.password = await bcrypt.hash(req.body.password,10)
     const newUser = new userSchema({...req.body})
     newUser.save()
-      .then(()=> res.status(200).json(newUser))
+      .then(()=> res.status(200).json({msg:`Un compte vient d'être ajouté`}))
       .catch(err=>res.status(400).json({msg:"Ce nom de compte existe deja",err}))
   }
   exports.login= async(req,res)=>{
@@ -42,3 +45,68 @@ exports.verifyJWT = async (req, res) => {
       // return CallbackError();
     }
   };
+exports.getAllUsers= async (req,res)=>{
+  let user = await userSchema.findOne({ _id: req.decodeToken.id });
+  if (await accesControler("admin", user.role)) {
+    const users = await userSchema.find();
+
+    return res.status(200).json(users);
+  } else {
+    return res.status(403).json({ msg: "u dont have acces to this" });
+  }
+}
+exports.modifyOneUser=async (req,res)=>{
+  let user = await userSchema.findOne({ _id: req.decodeToken.id });
+  if (await accesControler("admin", user.role)) {
+
+    try {
+      await userSchema.updateOne(
+        { _id: req.body._id },
+        { $set: req.body }
+      ).then(()=>res.status(200).json({msg:"Le compte a bien ete modifié."}))
+      .catch(()=>res.status(404).json({msg:"Le changement n'a pas pu être effectué."}))
+    } catch (error) {
+        return res.status(404).json({ err: err });
+    }
+     
+  } else {
+    return res.status(403).json({ msg: "u dont own the rights" });
+  }
+}
+exports.deleteOne = async (req, res) => {
+  let user = await userSchema.findOne({ _id: req.decodeToken.id });
+  if (await accesControler("admin", user.role)) {
+    let deleteUser = await userSchema.deleteOne({ _id: req.params._id});
+    return res.status(200).json({msg:"le compte a bien été supprimé."});
+  } else {
+    return res.status(403).json({ msg: "u dont have acces to this." });
+  }
+};
+exports.sendMail= async (req,res)=>{
+
+  function t(){
+    var transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.MAIL_ACC,
+        pass: process.env.MAIL_PASS
+      }
+    });
+    
+    var mailOptions = {
+      from: process.env.MAIL_ACC,
+      to: process.env.MAIL_ACC,
+      subject: `Urgent: La référence ${req.body.ref&&req.body.ref} est bientôt en rupture`,
+      text: `Il ne reste plus que ${req.body.newQuantity&&req.body.newQuantity} exemplaires de ce produit: ${req.body.name&&req.body.name} !`
+    };
+    
+    transporter.sendMail(mailOptions, function(error, info){
+      if (error) {
+        console.log(error);
+      } else {
+        console.log('Email sent: ' + info.response);
+      }
+    });
+  }
+  t()
+}

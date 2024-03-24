@@ -70,20 +70,21 @@ exports.deleteOne = async (req, res) => {
     return res.status(403).json({ msg: "u dont have acces to this" });
   }
 };
-exports.updateQuantity = async (req, res) => {
+exports.updateQuantityAndAlert = async (req, res) => {
   let user = await userSchema.findOne({ _id: req.decodeToken.id });
   if (await accesControler("employe", user.role)) {
+    console.log(req.body.quantity);
     let item = await productSchema.findOne({
       ref: req.params.ref.toUpperCase(),
     });
     if ((await item.quantity) < -req.body.quantity) {
       return res
         .status(207)
-        .json({ msg: "la quantité de produits est négative." });
+        .json({ msg: "la quantité de produits ne doit pas être négative." });
     }
     let product = await productSchema.updateOne(
       { ref: req.params.ref.toUpperCase() },
-      { $inc: req.body }
+      {$set:{alert:true,quantity:req.body.quantity}}
     );
     return res.status(200).json(product);
   } else {

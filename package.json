@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node server",
-    "nodemon":"nodemon node server"
+    "nodemon": "nodemon node server"
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
@@ -18,6 +18,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.6.2",
     "mongoose-unique-validator": "^3.1.0",
+    "nodemailer": "^6.9.13",
     "nodemon": "^2.0.20"
   }
 }
