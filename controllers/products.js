@@ -14,7 +14,7 @@ exports.getOne = async (req, res) => {
 };
 exports.getAll = async (req, res) => {
   let user = await userSchema.findOne({ _id: req.decodeToken.id });
-  if (await accesControler("admin", user.role)) {
+  if (await accesControler("employe", user.role)) {
     const products = await productSchema.find();
 
     return res.status(200).json(products);
