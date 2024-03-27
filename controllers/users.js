@@ -101,7 +101,7 @@ exports.sendMail= async (req,res)=>{
       subject: `Urgent: La référence ${req.body.ref&&req.body.ref} est bientôt en rupture`,
       text: `Il ne reste plus que ${req.body.newQuantity&&req.body.newQuantity} exemplaires de ce produit: ${req.body.name&&req.body.name} ! \n 
       ${otherproducts.length>0?"D'autre produits sont signalés en rupture : \n ":"Aucun autre produit est singlé en rupture"}
-      ${otherproducts.length>0?otherproducts.map(e=>(e.ref +" "+ e.name +"\n ")):""}`
+      ${otherproducts.length>0?otherproducts.map(e=>(e.ref +" "+ e.name +"\n\n ")):""}`
     };
     
     transporter.sendMail(mailOptions, function(error, info){
