@@ -2,6 +2,8 @@ var nodemailer = require('nodemailer')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken');
 const userSchema = require("../models/user");
+const productSchema = require("../models/product");
+
 const { accesControler } = require('../util/access');
 require("dotenv").config();
 exports.create = async (req,res)=>{
@@ -84,7 +86,7 @@ exports.deleteOne = async (req, res) => {
 };
 exports.sendMail= async (req,res)=>{
 
-  function t(){
+  async function t(otherproducts){
     var transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -97,7 +99,9 @@ exports.sendMail= async (req,res)=>{
       from: process.env.MAIL_ACC,
       to: process.env.MAIL_ACC,
       subject: `Urgent: La référence ${req.body.ref&&req.body.ref} est bientôt en rupture`,
-      text: `Il ne reste plus que ${req.body.newQuantity&&req.body.newQuantity} exemplaires de ce produit: ${req.body.name&&req.body.name} !`
+      text: `Il ne reste plus que ${req.body.newQuantity&&req.body.newQuantity} exemplaires de ce produit: ${req.body.name&&req.body.name} ! \n 
+      ${otherproducts.length>0?"D'autre produits sont signalés en rupture : \n ":"Aucun autre produit est singlé en rupture"}
+      ${otherproducts.length>0?otherproducts.map(e=>(e.ref +" "+ e.name +"\n ")):""}`
     };
     
     transporter.sendMail(mailOptions, function(error, info){
@@ -108,5 +112,7 @@ exports.sendMail= async (req,res)=>{
       }
     });
   }
-  t()
+  let allAlertProduct = await productSchema.find({alert:true})
+  t(allAlertProduct)
+
 }
