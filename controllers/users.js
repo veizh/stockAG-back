@@ -86,7 +86,7 @@ exports.deleteOne = async (req, res) => {
 };
 exports.sendMail= async (req,res)=>{
 
-  async function t(otherproducts){
+  async function mailing(otherproducts){
     var transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -113,6 +113,6 @@ exports.sendMail= async (req,res)=>{
     });
   }
   let allAlertProduct = await productSchema.find({alert:true})
-  t(allAlertProduct)
+  mailing(allAlertProduct)
 
 }
