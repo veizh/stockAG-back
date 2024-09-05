@@ -94,16 +94,22 @@ exports.sendMail= async (req,res)=>{
         pass: process.env.MAIL_PASS
       }
     });
-    console.log('====================================');
-    console.log(req.body);
-    console.log('====================================');
+    const t = ""
+    let suiteTxt=otherproducts.length>1?"Autres produits bientôt en rupture : \n ":"Aucun autre produit est signalé en rupture."
+    if(req.body.ref&&otherproducts.length>1){
+      otherproducts.map((e)=>{
+        if(e.ref!==req.body.ref)
+       t += e.ref +" ||| "+ e.name +" => "
+      })}
+
+    
+
     var mailOptions = {
       from: process.env.MAIL_ACC,
       to: process.env.MAIL_ACC,
       subject: `Urgent: La référence ${req.body.ref&&req.body.ref} est bientôt en rupture de stock`,
       text: `Il reste ${req.body.newQuantity&&req.body.newQuantity} exemplaires de ${req.body.name&&req.body.name} de référence: ${req.body.ref&&req.body.ref} ${req.body.minQuantity&&"alors que ca quantité minimal doit être de "+req.body.minQuantity}  ! \n 
-      ${otherproducts.length>1?"Produits bientôt en rupture : \n ":"Aucun autre produit est signalé en rupture."}
-      ${otherproducts.length>1?otherproducts.map((e)=>(""+e.ref +" => "+ e.name +" ||| ")):""}`
+      `+suiteTxt
     };
     
     transporter.sendMail(mailOptions, function(error, info){
