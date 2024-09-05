@@ -94,14 +94,16 @@ exports.sendMail= async (req,res)=>{
         pass: process.env.MAIL_PASS
       }
     });
-    
+    console.log('====================================');
+    console.log(req.body);
+    console.log('====================================');
     var mailOptions = {
       from: process.env.MAIL_ACC,
       to: process.env.MAIL_ACC,
-      subject: `Urgent: La référence ${req.body.ref&&req.body.ref} est bientôt en rupture`,
-      text: `Il ne reste plus que ${req.body.newQuantity&&req.body.newQuantity} exemplaires de ce produit: ${req.body.name&&req.body.name} ! \n 
-      ${otherproducts.length>0?"D'autre produits sont signalés en rupture : \n ":"Aucun autre produit est signalé en rupture"}
-      ${otherproducts.length>0?otherproducts.map(e=>(e.ref +" "+ e.name +"\n\n ")):""}`
+      subject: `Urgent: La référence ${req.body.ref&&req.body.ref} est bientôt en rupture de stock`,
+      text: `Il reste ${req.body.newQuantity&&req.body.newQuantity} exemplaires de ${req.body.name&&req.body.name} de référence: ${req.body.ref&&req.body.ref} ${req.body.minQuantity&&"alors que ca quantité minimal doit être de "+req.body.minQuantity}  ! \n 
+      ${otherproducts.length>1?"Produits bientôt en rupture : \n ":"Aucun autre produit est signalé en rupture."}
+      ${otherproducts.length>1?otherproducts.map((e)=>(""+e.ref +" => "+ e.name +" ||| ")):""}`
     };
     
     transporter.sendMail(mailOptions, function(error, info){

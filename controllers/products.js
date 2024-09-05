@@ -52,9 +52,25 @@ exports.create = async (req, res) => {
 exports.updateOne = async (req, res) => {
   let user = await userSchema.findOne({ _id: req.decodeToken.id });
   if (await accesControler("admin", user.role)) {
+
+    if(Number(req.body.quantity)<Number(req.body.minQuantity)){
+      let tmp = req.body
+      tmp.alert=true
+      let product = await productSchema.updateOne(
+        { ref: req.params.ref },
+        { $set: tmp }
+        
+      );
+      console.log(tmp);
+      
+      return res.status(201).json(product);
+    };
+
+    let tmp = req.body
+    tmp.alert=false
     let product = await productSchema.updateOne(
       { ref: req.params.ref },
-      { $set: req.body }
+      { $set: tmp }
     );
     return res.status(200).json(product);
   } else {
@@ -85,6 +101,68 @@ exports.updateQuantityAndAlert = async (req, res) => {
     let product = await productSchema.updateOne(
       { ref: req.params.ref.toUpperCase() },
       {$set:{alert:true,quantity:req.body.quantity}}
+    );
+    return res.status(200).json(product);
+  } else {
+    return res.status(403).json({ msg: "Vous n'avez pas les autorisations." });
+  }
+};
+exports.removeProductAndHandleAlert = async (req, res) => {
+  let user = await userSchema.findOne({ _id: req.decodeToken.id });
+  if (await accesControler("employe", user.role)) {
+    console.log('bien la fonction remove : ' + req.body.quantity);
+    let item = await productSchema.findOne({
+      ref: req.params.ref.toUpperCase(),
+    });
+    let newQuantity = Number(item.quantity) - Number(req.body.quantity)
+    console.log("minqt: "+item.minQuantity);
+    if (newQuantity<0) {
+      return res
+        .status(207)
+        .json({ msg: "la quantité de produits ne doit pas être négative." });
+    }
+    
+    if(item.minQuantity>newQuantity){
+      let product = await productSchema.updateOne(
+        { ref: req.params.ref.toUpperCase() },
+        {$set:{alert:true,quantity:newQuantity}}
+      );
+      return res.status(201).json(product);
+    }
+    let product = await productSchema.updateOne(
+      { ref: req.params.ref.toUpperCase() },
+      {$set:{alert:false,quantity:newQuantity}}
+    );
+    return res.status(200).json(product);
+  } else {
+    return res.status(403).json({ msg: "Vous n'avez pas les autorisations." });
+  }
+};
+exports.addProductAndHandleAlert = async (req, res) => {
+  let user = await userSchema.findOne({ _id: req.decodeToken.id });
+  if (await accesControler("employe", user.role)) {
+    console.log('bien la fonction add : ' + req.body.quantity);
+    let item = await productSchema.findOne({
+      ref: req.params.ref.toUpperCase(),
+    });
+    if ((await item.quantity) < -req.body.quantity) {
+      return res
+        .status(207)
+        .json({ msg: "la quantité de produits ne doit pas être négative." });
+    }
+    let newQuantity = Number(item.quantity) + Number(req.body.quantity)
+    console.log("minqt: "+item.minQuantity);
+    
+    if(item.minQuantity>newQuantity){
+      let product = await productSchema.updateOne(
+        { ref: req.params.ref.toUpperCase() },
+        {$set:{alert:true,quantity:newQuantity}}
+      );
+      return res.status(201).json(product);
+    }
+    let product = await productSchema.updateOne(
+      { ref: req.params.ref.toUpperCase() },
+      {$set:{alert:false,quantity:newQuantity}}
     );
     return res.status(200).json(product);
   } else {
