@@ -169,3 +169,20 @@ exports.addProductAndHandleAlert = async (req, res) => {
     return res.status(403).json({ msg: "Vous n'avez pas les autorisations." });
   }
 };
+
+exports.updateImage = async (req, res) => {
+  let user = await userSchema.findOne({ _id: req.decodeToken.id });
+  if (await accesControler("admin", user.role)) {
+
+  
+
+    let tmp = req.body
+    let product = await productSchema.updateOne(
+      { ref: req.params.ref },
+      { $set: tmp }
+    );
+    return res.status(200).json(product);
+  } else {
+    return res.status(403).json({ msg: "u dont have acces to this" });
+  }
+};

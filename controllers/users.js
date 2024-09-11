@@ -94,22 +94,20 @@ exports.sendMail= async (req,res)=>{
         pass: process.env.MAIL_PASS
       }
     });
-    const t = ""
-    let suiteTxt=otherproducts.length>1?"Autres produits bientôt en rupture : \n ":"Aucun autre produit est signalé en rupture."
+    let suiteTxt=otherproducts.length>1?"<p><b>Autres produits bientôt en rupture :</b></p> </br>":"Aucun autre produit est signalé en rupture.<ol>"
     if(req.body.ref&&otherproducts.length>1){
       otherproducts.map((e)=>{
         if(e.ref!==req.body.ref)
-       t += e.ref +" ||| "+ e.name +" => "
+         suiteTxt =suiteTxt+`<li><a href=${"https://stock-ag-front.vercel.app/product/"+e.ref}>` + e.ref +"</a>  ➔  "+ e.name +"  ➔  <em>Restant : </em><b>"+e.quantity+"</b>  ➔  <em>Minimum :</em> <b>"+e.minQuantity+"</b></li> "
       })}
-
+suiteTxt-suiteTxt+'</ol>'
     
 
     var mailOptions = {
       from: process.env.MAIL_ACC,
       to: process.env.MAIL_ACC,
-      subject: `Urgent: La référence ${req.body.ref&&req.body.ref} est bientôt en rupture de stock`,
-      text: `Il reste ${req.body.newQuantity&&req.body.newQuantity} exemplaires de ${req.body.name&&req.body.name} de référence: ${req.body.ref&&req.body.ref} ${req.body.minQuantity&&"alors que ca quantité minimal doit être de "+req.body.minQuantity}  ! \n 
-      `+suiteTxt
+      subject: `URGENT: La référence ${req.body.ref&&req.body.ref} est bientôt en rupture de stock`,
+      html: `<p>Il reste <b>${req.body.newQuantity&&req.body.newQuantity} exemplaires</b> de ${req.body.name&&req.body.name} de référence: ${req.body.ref&&req.body.ref} ${req.body.minQuantity&&"alors que ca <b>quantité minimal doit être de "+req.body.minQuantity}</b>  ! </p>`+suiteTxt
     };
     
     transporter.sendMail(mailOptions, function(error, info){

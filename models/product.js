@@ -11,7 +11,9 @@ var productSchema = mongoose.Schema({
     maxQuantity:{ type: Number, required: false },
     location:{ type: String,unique: false, required: false },
     alert:{type:Boolean,required:false},
-    annexe:{type:String,required:false}
+    annexe:{type:String,required:false},
+    quantityOnSite:{ type: Number, required: false },
+    imgUrl:{type:String,required:false}
     })
 productSchema.plugin(mongooseUniqueValidator)
 
