@@ -13,14 +13,10 @@ exports.getOne = async (req, res) => {
   }
 };
 exports.getAll = async (req, res) => {
-  let user = await userSchema.findOne({ _id: req.decodeToken.id });
-  if (await accesControler("employe", user.role)) {
-    const products = await productSchema.find();
+  const products = await productSchema.find();
 
     return res.status(200).json(products);
-  } else {
-    return res.status(403).json({ msg: "u dont have acces to this" });
-  }
+
 };
 
 exports.create = async (req, res) => {
