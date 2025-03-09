@@ -5,7 +5,7 @@ const auth = require('../middleware/auth');
 /* products listing. */
 //ajouter auth sur getOne ref =>employe / update => admin/updateqtonly => employe/ deleteone=>admin
 router.get('/getOne/:ref', auth,products.getOne);
-router.get('/getAll',auth, products.getAll);
+router.get('/getAll', products.getAll);
 router.post('/create',auth, products.create);
 router.put('/updateOne/:ref',auth, products.updateOne);
 router.put('/updateImage/:ref',auth, products.updateImage);

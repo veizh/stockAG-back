@@ -9,6 +9,8 @@ var productSchema = mongoose.Schema({
     quantity:{ type: Number, required: false },
     minQuantity:{ type: Number, required: false },
     maxQuantity:{ type: Number, required: false },
+    unite:{ type: Number, required: false },
+    familyRef:{ type: String, required: false },
     location:{ type: String,unique: false, required: false },
     alert:{type:Boolean,required:false},
     annexe:{type:String,required:false},
