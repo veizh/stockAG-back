@@ -135,8 +135,6 @@ exports.removeProductAndHandleAlert = async (req, res) => {
   }
 };
 exports.addProductAndHandleAlert = async (req, res) => {
-  let user = await userSchema.findOne({ _id: req.decodeToken.id });
-  if (await accesControler("employe", user.role)) {
     console.log('bien la fonction add : ' + req.body.quantity);
     let item = await productSchema.findOne({
       ref: req.params.ref.toUpperCase(),
@@ -161,10 +159,8 @@ exports.addProductAndHandleAlert = async (req, res) => {
       {$set:{alert:false,quantity:newQuantity}}
     );
     return res.status(200).json(product);
-  } else {
-    return res.status(403).json({ msg: "Vous n'avez pas les autorisations." });
   }
-};
+
 
 exports.updateImage = async (req, res) => {
   let user = await userSchema.findOne({ _id: req.decodeToken.id });

@@ -10,7 +10,7 @@ router.post('/create',auth, products.create);
 router.put('/updateOne/:ref',auth, products.updateOne);
 router.put('/updateImage/:ref',auth, products.updateImage);
 router.put('/updateQuantityAndAlert/:ref',auth, products.updateQuantityAndAlert)
-router.put('/addProductAndHandleAlert/:ref',auth, products.addProductAndHandleAlert)
+router.put('/addProductAndHandleAlert/:ref', products.addProductAndHandleAlert)
 router.put('/removeProductAndHandleAlert/:ref',auth, products.removeProductAndHandleAlert)
 router.delete('/deleteOne/:ref',auth, products.deleteOne);
 
