@@ -188,15 +188,17 @@ exports.returnFromInter = async (req,res)=>{
   { ref: req.params.ref},
   { $inc: { broken: req.body.quantity } }
 );
+return res.status(200).json(product);
       
-    return res.status(200).json(product);
-    }else{
+    }
       let product = await productSchema.findOneAndUpdate(
         { ref: req.params.ref},
-  { $inc: { quantity: req.body.quantity } }
+  { $inc: { quantity: Number(req.body.quantity) } }
       )
-      return res.status(200).json(product);
-    }
+      
+return res.status(200).json(product);
+      
+    
 
     
 }
