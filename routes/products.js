@@ -8,6 +8,7 @@ router.get('/getOne/:ref', auth,products.getOne);
 router.get('/getAll', products.getAll);
 router.post('/create',auth, products.create);
 router.put('/updateOne/:ref',auth, products.updateOne);
+router.put('/returnFromInter/:ref', products.returnFromInter);
 router.put('/updateImage/:ref',auth, products.updateImage);
 router.put('/updateQuantityAndAlert/:ref',auth, products.updateQuantityAndAlert)
 router.put('/addProductAndHandleAlert/:ref', products.addProductAndHandleAlert)

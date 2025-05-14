@@ -178,3 +178,25 @@ exports.updateImage = async (req, res) => {
     return res.status(403).json({ msg: "u dont have acces to this" });
   }
 };
+
+exports.returnFromInter = async (req,res)=>{
+  
+    console.log("produit",req.body.ref,":" ,req.body);
+
+    if(req.body.broken===true){
+     let product =  await productSchema.findOneAndUpdate(
+  { ref: req.params.ref},
+  { $inc: { broken: req.body.quantity } }
+);
+      
+    return res.status(200).json(product);
+    }else{
+      let product = await productSchema.findOneAndUpdate(
+        { ref: req.params.ref},
+  { $inc: { quantity: req.body.quantity } }
+      )
+      return res.status(200).json(product);
+    }
+
+    
+}

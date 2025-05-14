@@ -6,6 +6,7 @@ var productSchema = mongoose.Schema({
     name: { type: String, unique: true, required: true },
     ref: { type: String,unique: true, required: true },
     maker:{ type: String, required: false },
+    broken:{ type: Number, default:0 },
     quantity:{ type: Number, required: false },
     minQuantity:{ type: Number, required: false },
     maxQuantity:{ type: Number, required: false },
