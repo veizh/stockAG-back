@@ -5,7 +5,7 @@ const userSchema = require("../models/user");
 exports.getOne = async (req, res) => {
   let user = await userSchema.findOne({ _id: req.decodeToken.id });
   if (await accesControler("employe", user.role)) {
-    const product = await productSchema.findOne({ ref: req.params.ref });
+    const product = await productSchema.findOne({ _id: req.params._id });
     if (product) return res.status(200).json(product);
     return res.status(404).json({ error: "no match for the ref" });
   } else {
@@ -53,7 +53,7 @@ exports.updateOne = async (req, res) => {
       let tmp = req.body
       tmp.alert=true
       let product = await productSchema.updateOne(
-        { ref: req.params.ref },
+        { _id: req.params._id },
         { $set: tmp }
         
       );
@@ -65,7 +65,7 @@ exports.updateOne = async (req, res) => {
     let tmp = req.body
     tmp.alert=false
     let product = await productSchema.updateOne(
-      { ref: req.params.ref },
+      { _id: req.params._id },
       { $set: tmp }
     );
     return res.status(200).json(product);
@@ -76,7 +76,7 @@ exports.updateOne = async (req, res) => {
 exports.deleteOne = async (req, res) => {
   let user = await userSchema.findOne({ _id: req.decodeToken.id });
   if (await accesControler("admin", user.role)) {
-    let product = await productSchema.deleteOne({ ref: req.params.ref });
+    let product = await productSchema.deleteOne({ _id: req.params._id });
     return res.status(200).json(product);
   } else {
     return res.status(403).json({ msg: "u dont have acces to this" });
@@ -87,7 +87,7 @@ exports.updateQuantityAndAlert = async (req, res) => {
   if (await accesControler("employe", user.role)) {
     console.log(req.body.quantity);
     let item = await productSchema.findOne({
-      ref: req.params.ref.toUpperCase(),
+      _id: req.params._id,
     });
     if ((await item.quantity) < -req.body.quantity) {
       return res
@@ -95,7 +95,7 @@ exports.updateQuantityAndAlert = async (req, res) => {
         .json({ msg: "la quantité de produits ne doit pas être négative." });
     }
     let product = await productSchema.updateOne(
-      { ref: req.params.ref.toUpperCase() },
+      { _id: req.params._id },
       {$set:{alert:true,quantity:req.body.quantity}}
     );
     return res.status(200).json(product);
@@ -108,7 +108,7 @@ exports.removeProductAndHandleAlert = async (req, res) => {
   if (await accesControler("employe", user.role)) {
     console.log('bien la fonction remove : ' + req.body.quantity);
     let item = await productSchema.findOne({
-      ref: req.params.ref.toUpperCase(),
+      _id: req.params._id,
     });
     let newQuantity = Number(item.quantity) - Number(req.body.quantity)
     console.log("minqt: "+item.minQuantity);
@@ -120,13 +120,13 @@ exports.removeProductAndHandleAlert = async (req, res) => {
     
     if(item.minQuantity>newQuantity){
       let product = await productSchema.updateOne(
-        { ref: req.params.ref.toUpperCase() },
+        { _id: req.params._id },
         {$set:{alert:true,quantity:newQuantity}}
       );
       return res.status(201).json(product);
     }
     let product = await productSchema.updateOne(
-      { ref: req.params.ref.toUpperCase() },
+      { _id: req.params._id },
       {$set:{alert:false,quantity:newQuantity}}
     );
     return res.status(200).json(product);
@@ -137,7 +137,7 @@ exports.removeProductAndHandleAlert = async (req, res) => {
 exports.addProductAndHandleAlert = async (req, res) => {
     console.log('bien la fonction add : ' + req.body.quantity);
     let item = await productSchema.findOne({
-      ref: req.params.ref.toUpperCase(),
+      _id: req.params._id,
     });
     if ((await item.quantity) < -req.body.quantity) {
       return res
@@ -149,13 +149,13 @@ exports.addProductAndHandleAlert = async (req, res) => {
     
     if(item.minQuantity>newQuantity){
       let product = await productSchema.updateOne(
-        { ref: req.params.ref.toUpperCase() },
+        { _id: req.params._id },
         {$set:{alert:true,quantity:newQuantity}}
       );
       return res.status(201).json(product);
     }
     let product = await productSchema.updateOne(
-      { ref: req.params.ref.toUpperCase() },
+      { _id: req.params._id },
       {$set:{alert:false,quantity:newQuantity}}
     );
     return res.status(200).json(product);
@@ -170,7 +170,7 @@ exports.updateImage = async (req, res) => {
 
     let tmp = req.body
     let product = await productSchema.updateOne(
-      { ref: req.params.ref },
+      { _id: req.params._id },
       { $set: tmp }
     );
     return res.status(200).json(product);
@@ -181,18 +181,18 @@ exports.updateImage = async (req, res) => {
 
 exports.returnFromInter = async (req,res)=>{
   
-    console.log("produit",req.body.ref,":" ,req.body);
+    console.log("produit",req.body._id,":" ,req.body);
 
     if(req.body.broken===true){
      let product =  await productSchema.findOneAndUpdate(
-  { ref: req.params.ref},
+  { _id: req.params._id},
   { $inc: { broken: req.body.quantity } }
 );
 return res.status(200).json(product);
       
     }
       let product = await productSchema.findOneAndUpdate(
-        { ref: req.params.ref},
+        { _id: req.params._id},
   { $inc: { quantity: Number(req.body.quantity) } }
       )
       
